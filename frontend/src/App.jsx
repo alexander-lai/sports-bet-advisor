@@ -4,6 +4,7 @@ import Layout from './components/Layout.jsx';
 import Backtest from './pages/Backtest.jsx';
 import BetHistory from './pages/BetHistory.jsx';
 import Dashboard from './pages/Dashboard.jsx';
+import Games from './pages/Games.jsx';
 import Login from './pages/Login.jsx';
 import Performance from './pages/Performance.jsx';
 
@@ -27,6 +28,7 @@ export default function App() {
         }
       >
         <Route index element={<Dashboard />} />
+        <Route path="games" element={<Games />} />
         <Route path="history" element={<BetHistory />} />
         <Route path="performance" element={<Performance />} />
         <Route path="backtest" element={<Backtest />} />

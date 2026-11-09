@@ -127,6 +127,24 @@ refit on all rows.
   MAX_BET_FRACTION)`. The 5% default cap keeps full Kelly from sizing
   bets wildly on an overconfident projection.
 
+### Games: live and upcoming
+
+The **Games** page lists live, final and upcoming games for the next
+7 days. The schedule and scores come from Ball Don't Lie `/games` and
+are cached in memory for 30 seconds while today is in range (10 minutes
+for later days). The page refreshes every 30 seconds while a game is
+live.
+
+Each game is matched to its Odds API event by Eastern date and team
+names. **Find bets** fetches that one game's player props and runs the
+model on them. That costs about 3 credits per game, and the result is
+cached. The game's recommended picks then appear on its card, where you
+can accept or reject them.
+
+Games that have already tipped off are never priced, on this page or
+on the dashboard. In-game lines would be compared with a pre-game
+projection and produce fake edges.
+
 ### Bet tracking
 
 You can accept or reject each recommendation. Accepted bets are graded
@@ -167,6 +185,8 @@ All routes except register and login need `Authorization: Bearer <jwt>`.
 | POST | `/api/auth/register`, `/api/auth/login` | Get a JWT |
 | GET/PATCH | `/api/auth/me` | Profile and bankroll |
 | GET | `/api/predictions/today[?date=&refresh=1]` | Priced props |
+| GET | `/api/games[?start=&days=]` | Schedule, live scores, picks |
+| POST | `/api/games/price` | Price one game (`event_id`, `game_date`) |
 | POST/GET | `/api/bets` | Log (accept or reject) and list bets |
 | PATCH | `/api/bets/<id>` | Set outcome |
 | POST | `/api/bets/settle` | Grade pending bets from box scores |

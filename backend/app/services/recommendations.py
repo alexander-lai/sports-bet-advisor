@@ -1,6 +1,6 @@
 """Turn today's sportsbook props into model-backed recommendations."""
 import logging
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 import pandas as pd
 from flask import current_app
@@ -93,7 +93,19 @@ def match_event_props(event, payload, game_date, teams, players, source):
     return matched
 
 
-def generate_for_date(game_date, client=None):
+def has_started(event, now=None):
+    tip = datetime.fromisoformat(
+        event["commence_time"].replace("Z", "+00:00")
+    )
+    return tip <= (now or utcnow())
+
+
+def generate_for_date(game_date, client=None, event_ids=None):
+    """Price props for a slate (or only `event_ids` on that date).
+
+    Games that have already tipped off are skipped: in-game lines
+    would be compared with a pre-game projection.
+    """
     bundle = require_model()
     client = client or OddsApiClient.from_config()
     teams, players = _lookup_tables()
@@ -101,6 +113,10 @@ def generate_for_date(game_date, client=None):
     props = []
     for event in client.events():
         if to_eastern_date(event["commence_time"]) != game_date:
+            continue
+        if event_ids is not None and event["id"] not in event_ids:
+            continue
+        if has_started(event):
             continue
         payload = client.event_odds(event["id"])
         props += match_event_props(

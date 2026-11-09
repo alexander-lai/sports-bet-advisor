@@ -1,12 +1,12 @@
 from datetime import timedelta
 
-import pandas as pd
 import pytest
 
 from app.extensions import db
 from app.models import Game, GameLog, Player, Prediction, Team, User
 from app.services.ingest import finalize_derived
 from app.services.recommendations import generate_for_date
+from app.utils import today_et
 
 from .synthetic import make_data
 
@@ -105,10 +105,10 @@ class FakeOdds:
 
 def test_predictions_bets_and_settlement(app, client, auth):
     with app.app_context():
-        logs = _seed_db()
+        _seed_db()
         client.post("/api/model/retrain", headers=auth)
-        game_date = pd.to_datetime(logs["game_date"]).max().date()
-        game_date += timedelta(days=2)
+        # Tip-off must be in the future: started games are skipped.
+        game_date = today_et() + timedelta(days=1)
         preds = generate_for_date(game_date, client=FakeOdds(game_date))
         assert len(preds) == 1
         pred = preds[0]
@@ -135,7 +135,7 @@ def test_predictions_bets_and_settlement(app, client, auth):
 
     with app.app_context():
         db.session.add(GameLog(
-            id=999999, player_id=100, game_date=game_date, season=2025,
+            id=999999, player_id=100, game_date=game_date, season=2026,
             team_id=1, pts=25, reb=5, ast=5, min=30.0, is_home=True,
             opponent_id=2,
         ))

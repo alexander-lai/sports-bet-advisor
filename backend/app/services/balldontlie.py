@@ -67,6 +67,22 @@ class BallDontLieClient:
     def teams(self):
         return self._get("/teams").get("data", [])
 
+    def games(self, start_date, end_date):
+        """Every game (scheduled, live or final) in a date range."""
+        params = {
+            "start_date": start_date.isoformat(),
+            "end_date": end_date.isoformat(),
+            "per_page": PAGE_SIZE,
+        }
+        games = []
+        while True:
+            body = self._get("/games", params)
+            games += body.get("data", [])
+            cursor = (body.get("meta") or {}).get("next_cursor")
+            if not cursor:
+                return games
+            params["cursor"] = cursor
+
     def iter_stat_pages(self, season, start_date=None, cursor=None):
         """Yield (rows, next_cursor) for every page of box scores."""
         params = {"seasons[]": season, "per_page": PAGE_SIZE}

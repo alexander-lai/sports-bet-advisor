@@ -4,6 +4,7 @@ import { fmtMoney } from '../format.js';
 
 const LINKS = [
   { to: '/', label: 'Dashboard', end: true },
+  { to: '/games', label: 'Games' },
   { to: '/history', label: 'Bet History' },
   { to: '/performance', label: 'Performance' },
   { to: '/backtest', label: 'Backtest' },

@@ -30,11 +30,13 @@ def create_app(overrides=None):
     from .routes.auth import bp as auth_bp
     from .routes.backtest import bp as backtest_bp
     from .routes.bets import bp as bets_bp
+    from .routes.games import bp as games_bp
     from .routes.model import bp as model_bp
     from .routes.predictions import bp as predictions_bp
 
     for blueprint in (
-        auth_bp, predictions_bp, bets_bp, model_bp, backtest_bp
+        auth_bp, predictions_bp, games_bp, bets_bp, model_bp,
+        backtest_bp,
     ):
         app.register_blueprint(blueprint)
 
