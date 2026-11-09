@@ -1,0 +1,11 @@
+.env
+__pycache__/
+*.pyc
+node_modules/
+.DS_Store
+model/*.joblib
+
+# local tooling / build output
+.venv/
+.pytest_cache/
+frontend/dist/
